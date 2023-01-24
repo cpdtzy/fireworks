@@ -1,4 +1,3 @@
-
 /*
 
   Shape Shifter
@@ -15,17 +14,10 @@
 
 var S = {
   init: function () {
-    var action = window.location.href,
-        i = action.indexOf('?a=');
-
     S.Drawing.init('.canvas');
     document.body.classList.add('body--ready');
 
-    if (i !== -1) {
-      S.UI.simulate(decodeURI(action).substring(i + 3));
-    } else {
-      S.UI.simulate('|#countdown 3||某|某|祝|你|生|日|快|乐|#rectangle|');
-    }
+    S.UI.simulate('|#countdown 3||某|某|祝|你|生|日|快|乐|#rectangle|');
 
     S.Drawing.loop(function () {
       S.Shape.render();
@@ -92,12 +84,9 @@ S.Drawing = (function () {
 S.UI = (function () {
   var canvas = document.querySelector('.canvas'),
       interval,
-      isTouch = false, //('ontouchstart' in window || navigator.msMaxTouchPoints),
       currentAction,
-      resizeTimer,
       time,
       maxShapeSize = 30,
-      firstAction = true,
       sequence = [],
       cmd = '#';
 
@@ -134,22 +123,12 @@ S.UI = (function () {
     }
   }
 
-  function reset(destroy) {
-    clearInterval(interval);
-    sequence = [];
-    time = null;
-    destroy && S.Shape.switchShape(S.ShapeBuilder.letter(''));
-  }
-
   function performAction(value) {
     var action,
         value,
         current;
 
-    // overlay.classList.remove('overlay--visible');
     sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
-    // input.value = '';
-    // checkInputWidth();
 
     timedAction(function (index) {
       current = sequence.shift();
@@ -209,138 +188,12 @@ S.UI = (function () {
     }, 2000, sequence.length);
   }
 
-  function checkInputWidth(e) {
-    if (input.value.length > 18) {
-      ui.classList.add('ui--wide');
-    } else {
-      ui.classList.remove('ui--wide');
-    }
-
-    if (firstAction && input.value.length > 0) {
-      ui.classList.add('ui--enter');
-    } else {
-      ui.classList.remove('ui--enter');
-    }
-  }
-
-  function bindEvents() {
-    document.body.addEventListener('keydown', function (e) {
-      input.focus();
-
-      if (e.keyCode === 13) {
-        firstAction = false;
-        reset();
-        performAction(input.value);
-      }
-    });
-
-    // input.addEventListener('input', checkInputWidth);
-    // input.addEventListener('change', checkInputWidth);
-    // input.addEventListener('focus', checkInputWidth);
-
-    // help.addEventListener('click', function (e) {
-    //   overlay.classList.toggle('overlay--visible');
-    //   overlay.classList.contains('overlay--visible') && reset(true);
-    // });
-
-    // commands.addEventListener('click', function (e) {
-    //   var el,
-    //       info,
-    //       demo,
-    //       tab,
-    //       active,
-    //       url;
-    //
-    //   if (e.target.classList.contains('commands-item')) {
-    //     el = e.target;
-    //   } else {
-    //     el = e.target.parentNode.classList.contains('commands-item') ? e.target.parentNode : e.target.parentNode.parentNode;
-    //   }
-    //
-    //   info = el && el.querySelector('.commands-item-info');
-    //   demo = el && info.getAttribute('data-demo');
-    //   url = el && info.getAttribute('data-url');
-    //
-    //   if (info) {
-    //     overlay.classList.remove('overlay--visible');
-    //
-    //     if (demo) {
-    //       input.value = demo;
-    //
-    //       if (isTouch) {
-    //         reset();
-    //         performAction(input.value);
-    //       } else {
-    //         input.focus();
-    //       }
-    //     } else if (url) {
-    //       //window.location = url;
-    //     }
-    //   }
-    // });
-
-    canvas.addEventListener('click', function (e) {
-      overlay.classList.remove('overlay--visible');
-    });
-  }
-
-  function init() {
-    bindEvents();
-    // input.focus();
-    isTouch && document.body.classList.add('touch');
-  }
-
-  // Init
-  init();
-
   return {
     simulate: function (action) {
       performAction(action);
     }
   }
 }());
-
-
-S.UI.Tabs = (function () {
-  var tabs = document.querySelector('.tabs'),
-      labels = document.querySelector('.tabs-labels'),
-      triggers = document.querySelectorAll('.tabs-label'),
-      panels = document.querySelectorAll('.tabs-panel');
-
-  function activate(i) {
-    triggers[i].classList.add('tabs-label--active');
-    panels[i].classList.add('tabs-panel--active');
-  }
-
-  function bindEvents() {
-    labels.addEventListener('click', function (e) {
-      var el = e.target,
-          index;
-
-      if (el.classList.contains('tabs-label')) {
-        for (var t = 0; t < triggers.length; t++) {
-          triggers[t].classList.remove('tabs-label--active');
-          panels[t].classList.remove('tabs-panel--active');
-
-          if (el === triggers[t]) {
-            index = t;
-          }
-        }
-
-        activate(index);
-      }
-    });
-  }
-
-  function init() {
-    activate(0);
-    bindEvents();
-  }
-
-  // Init
-  init();
-}());
-
 
 S.Point = function (args) {
   this.x = args.x;
